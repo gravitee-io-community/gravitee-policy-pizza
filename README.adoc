@@ -68,7 +68,7 @@ Example configuration:
 [source, json]
 ----
 {
-    "json-to-json": {
+    "pizza-factory": {
         "required": ["sausage", "cheddar"],
         "forbidden": ["tuna"],
         "pineappleForbidden": true
