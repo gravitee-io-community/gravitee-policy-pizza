@@ -1,0 +1,6 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:io:gravitee:policy:pizza:configuration:PizzaPolicyConfiguration",
+  "properties" : {},
+  "required": []
+}
