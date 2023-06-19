@@ -15,27 +15,10 @@
  */
 package io.gravitee.policy.pizza.configuration;
 
-import io.gravitee.gateway.reactive.api.context.HttpExecutionContext;
-import io.gravitee.gateway.reactive.api.policy.Policy;
-import io.reactivex.rxjava3.core.Completable;
+import io.gravitee.policy.api.PolicyConfiguration;
 
 /**
  * @author Yann TAVERNIER (yann.tavernier at graviteesource.com)
  * @author GraviteeSource Team
  */
-public class PIzzaPolicyConfiguration implements Policy {
-    @Override
-    public String id() {
-        return "pizza";
-    }
-
-    @Override
-    public Completable onRequest(HttpExecutionContext ctx) {
-        return Policy.super.onRequest(ctx);
-    }
-
-    @Override
-    public Completable onResponse(HttpExecutionContext ctx) {
-        return Policy.super.onResponse(ctx);
-    }
-}
+public class PizzaPolicyConfiguration implements PolicyConfiguration {}
