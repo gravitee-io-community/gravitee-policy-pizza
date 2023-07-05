@@ -1,6 +1,6 @@
 {
-  "id": "my-api-v4",
-  "name": "my-api-v4",
+  "id": "my-api-v4-pineapple",
+  "name": "my-api-v4-pineapple",
   "gravitee": "4.0.0",
   "type": "proxy",
   "listeners": [
@@ -8,7 +8,7 @@
       "type": "http",
       "paths": [
         {
-          "path": "/test"
+          "path": "/test-pineapple"
         }
       ],
       "entrypoints": [
@@ -63,7 +63,8 @@
           "policy": "pizza-factory",
           "configuration": {
             "crust": "Pan",
-            "sauce": "TOMATO"
+            "sauce": "TOMATO",
+            "pineappleForbidden": false
           }
         }
       ],

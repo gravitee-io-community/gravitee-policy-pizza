@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.policy.pizza.configuration;
-
-import io.gravitee.policy.api.PolicyConfiguration;
-import io.gravitee.policy.pizza.Sauce;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+package io.gravitee.policy.pizza.exceptions;
 
 /**
  * @author Yann TAVERNIER (yann.tavernier at graviteesource.com)
  * @author GraviteeSource Team
  */
-@Getter
-@Setter
-@NoArgsConstructor
-public class PizzaPolicyConfiguration implements PolicyConfiguration {
+public class NotStringArrayException extends RuntimeException {
 
-    private String crust;
-    private Sauce sauce;
-    private boolean pineappleForbidden = true;
+    public static final String ERROR_BODY_SHOULD_BE_AN_ARRAY_OF_STRINGS = "Body should be an array of strings";
+
+    @Override
+    public String getMessage() {
+        return ERROR_BODY_SHOULD_BE_AN_ARRAY_OF_STRINGS;
+    }
 }

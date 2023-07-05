@@ -17,17 +17,25 @@
 
 == Description
 
-You can use the `pizza` policy to create a pizza from request or response headers.
+You can use the `pizza` policy to create a pizza from request or response headers and/or body.
 
-The headers having the form `X-Pizza-#key#: #value#` will be considered as valid headers to create the pizza.
+This policy allows the API Publisher to configure:
+ * The `crust`, which can be any string
+ * The `sauce`, which can only be `TOMATO` or `CREAM`
+ * If he allows the API Consumer to add `pineapple` topping on its pizza.
 
-`#key#` is a limited set of value which can be: `crust`, `sauce` and `topping`. (insensitive case). You need at least one header by category.
-`#value#` is anything you want.
+Then, the consumer of the API has to provide toppings to build the pizza.
+It can be done by providing one of the following or both:
+ * `X-Pizza-Topping` header with as many value as he wants
+ * An array of strings as a json payload. Providing an invalid payload will result on a `400 - BAD_REQUEST` or `500 - Internal Server Error`
 
-If no header starting with `X-Pizza-` can be found, then no pizza object will be created in the content of the request or response.
+If no toppings are provided, the policy does nothing expect adding the `X-Pizza: not-created` header.
+Else, a pizza object will be created and set as payload, and the header `X-Pizza: created will be added`.
 
-If content is not empty, a `pizza` object will be added. If there is no content, then the object will be created as root object.
-We assume the content type will be `application/json`.
+If `pineapple` is forbidden, and the API COnsumer tries to use it as a topping, then it should result in
+ * A `406 - Not Acceptable` on the request phase
+ * A `500 - Internal Server Error` on the response phase
+
 
 == Configuration
 
@@ -41,21 +49,21 @@ You can configure the policy with the following options:
 ^| Type
 ^| Default
 
-.^|required
-^.^|
-.^|The list of required toppings.
-^.^|array
+.^|crust
+^.^|X
+.^|The crust to use for your pizza, for example, `Pan`
+^.^|string
 ^.^|
 
-.^|forbidden
-^.^|
-.^|The list of forbidden toppings.
-^.^|array
+.^|sauce
+^.^|X
+.^|The sauce to use on the crust. Can be `TOMATO` or `SAUCE`
+^.^|string
 |
 
 .^|pineappleForbidden
 ^.^|
-.^|Is pineapple forbidden. Ends in a `406 - Not Acceptable` if "pineapple" is found in the toppings.
+.^|Is pineapple forbidden. Ends in a `406 - Not Acceptable` on request and `500 - Internal Server Error` on response if "pineapple" is found in the toppings.
 ^.^|boolean
 ^.^|`true`
 
@@ -66,34 +74,32 @@ Example configuration:
 [source, json]
 ----
 {
-    "pizza-factory": {
-        "required": ["sausage", "cheddar"],
-        "forbidden": ["tuna"],
-        "pineappleForbidden": true
+    "configuration": {
+        "crust": "Pan",
+        "sauce": "TOMATO",
+        "pineappleForbidden": false
     }
 }
 ----
 
 == Examples
 
-For this input:
+Using the previous configuration example and for this input:
 
 [source, json]
 .Input
 ----
-{
-    "name": "My pizza"
-}
+[
+    "cheddar", "mustard"
+]
 ----
 
 [source, httprequest]
 .Input
 ----
-X-Pizza-Crust: Soft Pan
-X-Pizza-Sauce: Tomato
-X-Pizza-Topping: Mushroom
-X-Pizza-Topping: Onions
-X-Pizza-Topping: Ham
+X-Pizza-Topping: mushroom
+X-Pizza-Topping: onions
+X-Pizza-Topping: ham
 ----
 
 The output is as follows:
@@ -101,12 +107,15 @@ The output is as follows:
 [source, json]
 ----
 {
-    "name": "My pizza",
-    "pizza": {
-      "crust": "Soft Pan",
-      "sauce": "Tomato",
-      "toppings": ["Mushroom", "Onions", "Ham"]
-    }
+  "crust": "Pan",
+  "sauce": "TOMATO",
+  "toppings": [
+    "cheddar",
+    "mustard",
+    "mushroom",
+    "onions",
+    "ham"
+  ]
 }
 ----
 
@@ -115,9 +124,19 @@ The output is as follows:
 |===
 |Phase | Code | Error template key | Description
 
-.^| *
-.^| ```406```
-.^| NOT_ACCEPTABLE_PINEAPPLE
+.^| REQUEST
+.^| ```406 - NOT ACCEPTABLE```
+.^| PIZZA_ERROR
 .^| Not Acceptable to have pineapple on a Pizza.
+
+.^| REQUEST
+.^| ```400 - BAD REQUEST```
+.^| PIZZA_ERROR
+.^| The paylaod is not an array of string or an error occurs while processing pizza
+
+.^| RESPONSE
+.^| ```500 - INTERNAL SERVER ERROR```
+.^| PIZZA_ERROR
+.^| Not Acceptable to have pineapple on a Pizza or the paylaod is not an array of string or an error occurs while processing pizza
 
 |===

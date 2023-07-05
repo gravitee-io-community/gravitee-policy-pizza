@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.policy.pizza.configuration;
+package io.gravitee.policy.pizza;
 
-import io.gravitee.policy.api.PolicyConfiguration;
-import io.gravitee.policy.pizza.Sauce;
+import java.util.Set;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
  * @author Yann TAVERNIER (yann.tavernier at graviteesource.com)
  * @author GraviteeSource Team
  */
+@Builder
 @Getter
 @Setter
-@NoArgsConstructor
-public class PizzaPolicyConfiguration implements PolicyConfiguration {
+public class Pizza {
 
     private String crust;
     private Sauce sauce;
-    private boolean pineappleForbidden = true;
+    private Set<String> toppings;
 }
