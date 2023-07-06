@@ -20,12 +20,14 @@
 You can use the `pizza` policy to create a pizza from request or response headers and/or body.
 
 This policy allows the API Publisher to configure:
+
  * The `crust`, which can be any string
  * The `sauce`, which can only be `TOMATO` or `CREAM`
  * If he allows the API Consumer to add `pineapple` topping on its pizza.
 
 Then, the consumer of the API has to provide toppings to build the pizza.
 It can be done by providing one of the following or both:
+
  * `X-Pizza-Topping` header with as many value as he wants
  * An array of strings as a json payload. Providing an invalid payload will result on a `400 - BAD_REQUEST` or `500 - Internal Server Error`
 
@@ -33,6 +35,7 @@ If no toppings are provided, the policy does nothing expect adding the `X-Pizza:
 Else, a pizza object will be created and set as payload, and the header `X-Pizza: created will be added`.
 
 If `pineapple` is forbidden, and the API COnsumer tries to use it as a topping, then it should result in
+
  * A `406 - Not Acceptable` on the request phase
  * A `500 - Internal Server Error` on the response phase
 
