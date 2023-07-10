@@ -48,6 +48,7 @@ import io.gravitee.policy.pizza.configuration.PizzaPolicyConfiguration;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.rxjava3.core.buffer.Buffer;
 import io.vertx.rxjava3.core.http.HttpClient;
 import io.vertx.rxjava3.core.http.HttpClientRequest;
 import java.util.List;
@@ -89,14 +90,14 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test")
                 .flatMap(request -> request.rxSend())
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
                 .assertComplete()
-                .assertNoValues()
+                .assertValue(Buffer.buffer())
                 .assertNoErrors();
 
             wiremock.verify(1, getRequestedFor(urlPathEqualTo("/endpoint")).withHeader(X_PIZZA_HEADER, equalTo(NOT_CREATED)));
@@ -110,14 +111,14 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test")
                 .flatMap(request -> request.putHeader(X_PIZZA_HEADER_TOPPING, List.<String>of("peperoni", "cheddar")).rxSend())
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
                 .assertComplete()
-                .assertNoValues()
+                .assertValue(Buffer.buffer())
                 .assertNoErrors();
 
             wiremock.verify(
@@ -140,14 +141,14 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test")
                 .flatMap(httpClientRequest -> httpClientRequest.rxSend(toppings.toString()))
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
                 .assertComplete()
-                .assertNoValues()
+                .assertValue(Buffer.buffer())
                 .assertNoErrors();
 
             wiremock.verify(
@@ -172,14 +173,14 @@ class PizzaPolicyIntegrationTest {
                 .flatMap(httpClientRequest ->
                     httpClientRequest.putHeader(X_PIZZA_HEADER_TOPPING, List.<String>of("cheddar", "mushroom")).rxSend(toppings.toString())
                 )
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
                 .assertComplete()
-                .assertNoValues()
+                .assertValue(Buffer.buffer())
                 .assertNoErrors();
 
             wiremock.verify(
@@ -206,14 +207,14 @@ class PizzaPolicyIntegrationTest {
                 .flatMap(httpClientRequest ->
                     httpClientRequest.putHeader(X_PIZZA_HEADER_TOPPING, List.<String>of("cheddar", "mushroom")).rxSend(toppings.toString())
                 )
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
                 .assertComplete()
-                .assertNoValues()
+                .assertValue(Buffer.buffer())
                 .assertNoErrors();
 
             wiremock.verify(
@@ -242,9 +243,9 @@ class PizzaPolicyIntegrationTest {
                 .flatMap(httpClientRequest ->
                     httpClientRequest.putHeader(X_PIZZA_HEADER_TOPPING, List.<String>of("cheddar", "mushroom")).rxSend(toppings.toString())
                 )
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.BAD_REQUEST_400);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
@@ -272,9 +273,9 @@ class PizzaPolicyIntegrationTest {
                 .flatMap(httpClientRequest ->
                     httpClientRequest.putHeader(X_PIZZA_HEADER_TOPPING, List.<String>of("cheddar", "mushroom")).rxSend(toppings.toString())
                 )
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.NOT_ACCEPTABLE_406);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
@@ -318,15 +319,15 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test")
                 .flatMap(request -> request.rxSend())
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
                     assertThat(extractHeaders(response)).contains(Map.entry(X_PIZZA_HEADER, NOT_CREATED));
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
                 .assertComplete()
-                .assertNoValues()
+                .assertValue(Buffer.buffer())
                 .assertNoErrors();
 
             wiremock.verify(1, getRequestedFor(urlPathEqualTo("/endpoint")));
@@ -340,10 +341,10 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test")
                 .flatMap(HttpClientRequest::rxSend)
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
                     assertThat(response.headers().get(X_PIZZA_HEADER)).isEqualTo(CREATED);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
@@ -369,10 +370,10 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test")
                 .flatMap(HttpClientRequest::rxSend)
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
                     assertThat(response.headers().get(X_PIZZA_HEADER)).isEqualTo(CREATED);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
@@ -400,10 +401,10 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test")
                 .flatMap(HttpClientRequest::rxSend)
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
                     assertThat(response.headers().get(X_PIZZA_HEADER)).isEqualTo(CREATED);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
@@ -432,10 +433,10 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test-pineapple")
                 .flatMap(HttpClientRequest::rxSend)
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.OK_200);
                     assertThat(response.headers().get(X_PIZZA_HEADER)).isEqualTo(CREATED);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
@@ -466,9 +467,9 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test")
                 .flatMap(HttpClientRequest::rxSend)
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.INTERNAL_SERVER_ERROR_500);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)
@@ -496,9 +497,9 @@ class PizzaPolicyIntegrationTest {
             httpClient
                 .rxRequest(HttpMethod.GET, "/test")
                 .flatMap(HttpClientRequest::rxSend)
-                .flatMapPublisher(response -> {
+                .flatMap(response -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatusCode.INTERNAL_SERVER_ERROR_500);
-                    return response.toFlowable();
+                    return response.body();
                 })
                 .test()
                 .awaitDone(10, TimeUnit.SECONDS)

@@ -170,7 +170,7 @@ public class PizzaPolicy implements Policy {
     private void verifyPineapple(Set<String> toppings) {
         if (
             configuration.isPineappleForbidden() &&
-            toppings.stream().anyMatch(topping -> "ananas".equalsIgnoreCase(topping) || "pineapple".equalsIgnoreCase(topping))
+            toppings.stream().anyMatch(topping -> "🍍".equalsIgnoreCase(topping) || "pineapple".equalsIgnoreCase(topping))
         ) {
             throw new PineappleForbiddenException();
         }
