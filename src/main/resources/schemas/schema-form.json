@@ -1,27 +1,27 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "additionalProperties": false,
-  "properties" : {
-    "crust": {
-      "title": "Crust",
-      "description": "Choose the crust type for the pizza",
-      "type": "string",
-      "default": ""
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "crust": {
+            "title": "Crust",
+            "description": "Choose the crust type for the pizza",
+            "type": "string",
+            "default": ""
+        },
+        "sauce": {
+            "title": "Sauce",
+            "description": "Choose the sauce type for the pizza",
+            "type": "string",
+            "default": "TOMATO",
+            "enum": ["TOMATO", "CREAM"]
+        },
+        "pineappleForbidden": {
+            "title": "pineappleForbidden",
+            "description": "Is Pineapple forbidden on the pizza?",
+            "type": "boolean",
+            "default": true
+        }
     },
-    "sauce": {
-      "title": "Sauce",
-      "description": "Choose the sauce type for the pizza",
-      "type": "string",
-      "default": "TOMATO",
-      "enum": ["TOMATO", "CREAM"]
-    },
-    "pineappleForbidden": {
-      "title": "pineappleForbidden",
-      "description": "Is Pineapple forbidden on the pizza?",
-      "type": "boolean",
-      "default": true
-    }
-  },
-  "required": ["crust", "sauce"]
+    "required": ["crust", "sauce"]
 }
