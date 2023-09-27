@@ -87,7 +87,7 @@ Example configuration:
 Using the previous configuration example and for this input:
 
 [source, json]
-.Input
+.Payload
 ----
 [
     "cheddar", "mustard"
@@ -95,7 +95,7 @@ Using the previous configuration example and for this input:
 ----
 
 [source, httprequest]
-.Input
+.Headers
 ----
 X-Pizza-Topping: mushroom
 X-Pizza-Topping: onions
